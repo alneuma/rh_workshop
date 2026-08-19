@@ -1,5 +1,5 @@
 # Guide for setting up a Rocky Linux VM for experimentation
-*Many instructions are intentionally left vague. Use your own knowledge, do research, and ask your peers to fill in the gaps. If you are ambitious, try to limit online research and AI usage to a minimum. In an actual RHCSA exam your only help will be man pages and the built-in help of commands. You also wouldn't have access to GUI tools such as VS Code. If you want to challenge yourself, use command-line tools for everything. This, of course, is not a must. The most important goal is to have your VM up and running by the end of the day.*
+*Many instructions are intentionally left vague. Use your own knowledge, do research, and ask your peers to fill in the gaps. If you are ambitious, try to limit online research and AI usage to a minimum. In an actual RHCSA exam your only help will be man pages and the built-in help of commands. Start getting used to it! You also wouldn't have access to GUI tools such as VS Code. If you want to challenge yourself, use command-line tools for everything. This, of course, is not a must. The most important goal is to have your VM up and running by the end of the day.*
 
 ## 1. Get the files
 *commands: `sha256sum`, `curl`, `wget`, `uname`*
