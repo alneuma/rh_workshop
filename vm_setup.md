@@ -1,31 +1,19 @@
-Read this to inform your decisions on where to save different (potentially large) files: https://42berlin.notion.site/cluster-storage
+# guide for setting up a Rocky Linux VM for experimentation
+*many instructions are intentionally left vague. Fill in the gaps with your own knowledge, research and by asking your peers. If you are ambitous try to limit online research and AI usage to a minimum. In a potential RHCSA exam your only help will be man pages and the built in help of commands. You also would not have access to GUI tools like VSCode. If you want to challenge yourself use Vim or Nano and the command line for everything. This of course is not a must. The most important goal is to have your VM running by the end of the day.*
 
-- Download the latest version of Rocky Linux from their official website use the **Boot ISO** or the **Minimal ISO** (this will only be used during setup)
+## 1. Get the files
+*commands: `sha256sum`, `curl`, `wget`, `uname`*
 
-- use the `CHECKSUM` file from their website to verify the validity of your download
-*hint: use `sha256sum -c`*
+- Read [this](https://42berlin.notion.site/cluster-storage) to inform your decisions on where to save different (potentially large) files
+- Download the latest version of Rocky Linux from their official website. There are a couple of different options. Ask yourself: What architecture am I targeting? Do I need everything contained in the downloaded file or can I donwload more components during installation? *hint: The downloaded file will only be used for installing the VM. After that it is not needed anymore.*
+- use the `CHECKSUM` file to verify the validity of your download
+- without accessing the browser download the `make_vm.sh` script from this url: https://raw.githubusercontent.com/alneuma/vbox_make_vm/refs/heads/main/make_vm.sh
 
-- Download the `make_vm.sh` script from github
-*challange: do it with curl from the command line*
+## 2. Use the script to setup the VM
+*commands: `chmod`, `vim`, `nano`, `VBoxManage`, `realpath`, `grep`*
 
-here is the link:
-https://raw.githubusercontent.com/alneuma/vbox_make_vm/refs/heads/main/make_vm.sh
-
-first milestone reached
-
-- Modify the `make_vm.sh` script to suite your needs
-    - `name` can be chosen freely
-    - `iso` should match the path of your downloaded Rocky Linux ISO
-    - `vmhdpath` should ideally be a path somewhere in `sgoinfre`
-    - `goinfre` and `sgoingfre` are both *symbolic links*
-    - When filling in the paths into the script make certain to not depend on symbolic links but use *absolute paths* (the `realpath` command might be useful for that)
-    - `ostype` is the Virtual Box ID for the OS we are using. It should be something that corresponds to the latest version of RedHead, 64 Bit and not ARM
-    - use `VBoxManage list ostypes` together with `grep` to figure out the exact name of the ID
-    - hd size should be at least 6GB i.e. `6144` better use more
-    - `ssh_map_vm` should be `22`
-    - All the other fields are not too important. You can leave them as they are
-
-- make the script executable
+- open the script and read the comments
+- make necessary adjustments
 - run the script
 
 You should see something like this:
@@ -38,52 +26,51 @@ Settings file: '/sgoinfre/goinfre/Perso/your_intra/VBox/vms/rocky_vm/rocky_vm.vb
 Medium created. UUID: 20a90670-aab4-4866-8d08-360c999022f9
 ```
 
-*suggestion for later: use a free moment to understand the script and find ways to improve it*
+*hint: The script is very bare bones. If you like you could revisit it later to fully understand it and make it more production grade.*
 
-second milestone reached
+## 3. Install Rocky Linux to your VM
+*commands: `VBoxManage`*
 
-- use `VBoxManage startvm <vm-name>` to start your new VM from the command line
-
+- start your VM from the command line
 - go through the installation process
 - create one admin user
 - use the whole disk and check `automatic`
+- when everything is complete take a snapshot of your VM
 
-- when the installation and subsequent reboot is complete take a snapshot of your vm `VBoxManage snapshot <vm-name> take <snapshot-name>
+## 4. Use SSH to connect from your host to the VM
+Using the VM through the VirtualBox GUI window is super annoying. SSH to the rescue!
+*commands: `dnf`, `systemctl`, `ssh`*
 
-third milestone reached
+- update all the packages on your vm
+- verify that sshd is running
+- connect from you host to the VM (Which port, username and host would you need to use?)
 
-Using the vm through the VirtualBox window is super annoying. That is why the first thing we want to do is to setup ssh such that we can connect from the host to the vm from the command line
+*Hint: Depending on how you have used SSH in the past, there might be a scary looking warning appearing when you try to connect. Can you figure out what this is and how to best deal with it?*
 
-- update all the packages on your vm (look into the `dnf`) command
-- verify that sshd is running on the vm (`systemctl`)
-*question for later research: what is the difference between `ssh` and `sshd`? What does the `d` stand for?*
-- use `firewall-cmd` to open tcp port 22
-- use `ssh` to connect to the vm from your host with `ssh_map_host` from your `make_vm.sh` script as the port your vm admin user as the user and localhost as the destination host to verify that everything works
-- disconnect
+*Question for later: What is the difference between ssh and sshd?*
 
-fourth milestone reached
+## 5. Set up public key authentification for SSH
+Having to type the password each time you connect to your VM is not super convenient. Also allowing password authentification for SSH is considered to be a security risk. Let's now add some minimal security and convenience by setting up public key authentification for SSH.
+*commands: `ssh-keygen`, `ssh-copy-id`, `ssh`, `systemctl`, `vim`, `nano`, `sudo`*
 
-It generally is a bad idea to allow ssh connections via password authentification. Let's now add some minimal security (and convenience) by setting up public key authentification for ssh.
+- Figure out how public key security works on a high abstraction level. Which files are needed to set it up?
+- create a new ssh key pair on your host. What is the recommended algorithm?
+- copy the public key to your VM
+- connect to your VM via SSH
+- on your VM: configure the SSH service to not permit password authentification and no root login
+- restart the ssh service on your VM
 
-- Question: On a high abstraction level: How does public key security work? Which files are involved?
-- create a new ssh key pair on your host `ssh-keygen`
-    - don't just use `rsa` as the algorithm for your ssh-key. What is recommended?
-- use `ssh-copy-id` to copy the public key to the vm
-- use `ssh` to connect to the vm
-- change the sshd config file to forbid root login and password authentification
-- use `systemctl` to restart sshd
+## 6. Finalize
+The very basic convenience setup for your VM is now done.
+*commands: `VBoxManage`*
 
-fifth milestone reached
-
-The very basic convenience setup for your vm is now done. the next time you start it you can use `VBoxManage startvm <vm-name> --type=headless`. This will start the vm in the background without opening a Window. You don't need it anymore. Everything can be done via ssh.
-
-Time to take another snapshot (To save space you can delete the old one)
-
-You can now start experimenting with your vm. If you break something or something goes wrong you can use the snapshot to go back to a previous state.
+- take a snapshot
+- get comfortable with the different ways of starting and stopping your VM from the command line with VBoxManage
+- start experimenting and go back to a snapshot if something breaks
 
 some recommendations:
 
 - overwrite the `PS1` shell variable in your `.bashrc`
 - install EPEL (What is that?)
-- install a (command line) text editor you feel comfortable with
+- install a command line text editor you feel comfortable with
 - install `tldr` (probably not available for RHCSA examination but super useful if you don't want to go to the browser every five seconds)
