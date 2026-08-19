@@ -39,6 +39,7 @@ Medium created. UUID: 20a90670-aab4-4866-8d08-360c999022f9
 
 ## 4. Use SSH to connect from your host machine to the VM
 Using the VM through the VirtualBox GUI window is super annoying. SSH to the rescue!
+
 *commands: `dnf`, `systemctl`, `ssh`*
 
 - Update all the packages on your VM
@@ -51,6 +52,7 @@ Using the VM through the VirtualBox GUI window is super annoying. SSH to the res
 
 ## 5. Set up public key authentication for SSH
 Having to type the password each time you connect to your VM is not super convenient. Also allowing password authentication for SSH is considered to be a security risk. Let's now add some basic security and convenience by setting up public key authentication for SSH.
+
 *commands: `ssh-keygen`, `ssh-copy-id`, `ssh`, `systemctl`, `vi`, `sudo`*
 
 - Figure out how public-key authentication works at a high level. Which files do you need to set it up?
