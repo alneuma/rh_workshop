@@ -11,6 +11,7 @@
 | `VBoxManage snapshot <vm-name> take <snapshot-name>` | take a snapshot |
 | `VBoxManage snapshot <vm-name> delete <snapshot-name>` | delete a snapshot |
 | `VBoxManage snapshot <vm-name> restore <snapshot-name>` | restore a snapshot |
+| `VBoxManage snapshot <vm-name> list` | list snapshots of a VM |
 | `VBoxManage controlvm <vm-name> savestate` | shut down the VM while saving its current state |
 | `VBoxManage controlvm <vm-name> acpipowerbutton` | instruct the VM to shut down gracefully (if configured) |
 | `VBoxManage controlvm <vm-name> poweroff` | force the VM to shut down |
