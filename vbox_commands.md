@@ -1,5 +1,5 @@
 # useful commands to control VirtualBox from the command line
-*hint: create an alias for VBoxManage*
+*suggestion: create an alias for VBoxManage*
 
 | command | effect |
 |-|-|
