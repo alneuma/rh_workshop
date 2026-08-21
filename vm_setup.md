@@ -34,7 +34,8 @@ Medium created. UUID: 20a90670-aab4-4866-8d08-360c999022f9
 - Start your VM from the command-line
 - Go through the installation process
     - Create one admin user
-    - Use the entire disk and check `automatic`
+    - Use the entire disk and check `Automatic`
+    - Choose the option for a `Minimal Installation`
 - When the installation is complete, take a snapshot of your VM
 
 ## 4. Use SSH to connect from your host machine to the VM
